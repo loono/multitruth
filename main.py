@@ -15,8 +15,15 @@ from jinja2 import Markup
 class Article(db.Model):
     name = db.StringProperty(required=True)
     content = db.TextProperty(required=True)
+    media = db.StringProperty(required=True)
     fileid = db.StringProperty(required=True)
     time = db.StringProperty(required=True)
+    topicid = db.StringProperty(required=True)
+
+class Topic(db.Model):
+    name = db.StringProperty(required=True)
+    topicid = db.StringProperty(required=True)
+
 
 app = Flask(__name__)
 f=open('password.cfg')
@@ -28,19 +35,33 @@ code = f.readline().strip()
 @app.route('/')
 def index():
 
-    articles = db.GqlQuery("SELECT * FROM Article ORDER BY time")
+    topics = db.GqlQuery("SELECT * FROM Topic")
     
+    files = []
+    for f in topics:
+        a = {}
+        a['topicid'] = f.topicid
+        a['name'] = f.name
+        files.append(a)
+    
+    return render_template('index.html', files=files)
+
+@app.route('/topic/<tid>')
+def page(tid):
+
+    articles = db.GqlQuery("SELECT * FROM Article WHERE topicid = "+"'"+tid+"'")
+
     files = []
     for f in articles:
         a = {}
         a['title'] = f.name
         a['content'] = Markup(f.content.replace(' ', '<br>'))
+        a['media'] = f.media
         files.append(a)
     
-
     files.reverse()
 
-    return render_template('index.html', files=files)
+    return render_template('page.html', files=files)
 
 @app.route('/update')
 def add_content():
@@ -52,16 +73,29 @@ def post_content():
     if md5.new(request.form['code']).hexdigest() != code:
     	return redirect(url_for('add_content'))
 
+    tid = md5.new(request.form['topic']).hexdigest()
+    topics = db.GqlQuery("SELECT * FROM Topic WHERE topicid = "+"'"+tid+"'")
+
+    if not topics.fetch(10):
+        
+        t = Topic(name=request.form['topic'], 
+        		  topicid=tid)
+
+        t.put()
+
     title = request.form['title']
     time = str(datetime.datetime.now())
     fileid = md5.new(time).hexdigest()
+    media = request.form['media']
 
     content = request.form['content']
 
     f = Article(name=title,
     			time=time,
     			fileid=fileid,
-    			content=content)
+    			content=content,
+    			media=media,
+    			topicid=tid)
 
     f.put()
 

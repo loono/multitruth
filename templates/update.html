@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="utf8">
 <head>
-    <title>Loono's Space</title>
+    <title>Multi Truths</title>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.js"></script>
 	<style type="text/css">
@@ -13,13 +13,19 @@
 <body>
 	<div class="ui fixed menu">
     	<div class="ui container">
-    		<a href="/" class="item">Loono's Space</a>
+    		<a href="/" class="item">Multi Truths</a>
     	</div>
     </div>
 
     <div class="ui main text container">
     	<div class="ui raised segment">
 			<form class="ui form" action="post" method="post">
+				
+				<div class="field">
+			        <label>Topic</label>
+			        <input type="text" name="topic"><br>
+			    </div>
+
 				<div class="field">
 			        <label>Title</label>
 			        <input type="text" name="title"><br>
@@ -28,6 +34,11 @@
 			    <div class="field">
 			        <label>Content</label>
 			        <input type="text" name="content" class="textarea"><br>
+			    </div>
+
+			    <div class="field">
+			        <label>Media</label>
+			        <input type="text" name="media"><br>
 			    </div>
 
 			    <div class="field">
