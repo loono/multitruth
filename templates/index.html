@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="utf8">
+<head>
+    <title>Loono's Space</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.js"></script>
+	<style type="text/css">
+		.main.container {
+    		margin-top: 5em;
+  		}
+	</style>
+</head>
+<body>
+
+    <div class="ui fixed menu">
+    	<div class="ui container">
+    		<a href="/" class="item">Loono's Space</a>
+    		<div class="ui simple dropdown item">
+    			文章
+    		  <div class="menu">
+    		    {% for item in files %}
+    		      <a class="item" href="#{{item.title}}">{{item.title}}</a>
+    		    {% endfor %}
+    		  </div>
+    		 </div>	
+    	</div>
+    </div>
+
+    <div class="ui main text container">
+		{% for item in files %}
+			<div class="ui raised segments" id="{{item.title}}">
+			  <div class="ui segment">
+			    <p>{{item.title}}</p>
+			  </div>
+			  <div class="ui secondary segment">
+			    <p>{{ item.content }}</p>
+			  </div>
+			</div>
+			<br><br>
+	    {% endfor %}
+	</div>
+
+
+</body>
+</html>
