@@ -55,7 +55,7 @@ def page(tid):
     for f in articles:
         a = {}
         a['title'] = f.name
-        a['content'] = Markup(f.content.replace(' ', '<br>'))
+        a['content'] = Markup(f.content)
         a['media'] = f.media
         a['fileid'] = f.fileid
         files.append(a)
@@ -73,10 +73,8 @@ def post_content():
 
     if md5.new(request.form['code']).hexdigest() != code:
     	return redirect(url_for('add_content'))
-
-    time = str(datetime.datetime.now())
-        
-    tid = md5.new(time).hexdigest()
+    
+    tid = md5.new(request.form['topic'].encode("utf8")).hexdigest()
     topics = db.GqlQuery("SELECT * FROM Topic WHERE topicid = "+"'"+tid+"'")
 
     if not topics.fetch(10):
@@ -92,6 +90,8 @@ def post_content():
     media = request.form['media']
 
     content = request.form['content']
+
+    print repr(content)
 
     f = Article(name=title,
     			time=time,
