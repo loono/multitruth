@@ -57,6 +57,7 @@ def page(tid):
         a['title'] = f.name
         a['content'] = Markup(f.content.replace(' ', '<br>'))
         a['media'] = f.media
+        a['fileid'] = f.fileid
         files.append(a)
     
     files.reverse()
@@ -73,7 +74,9 @@ def post_content():
     if md5.new(request.form['code']).hexdigest() != code:
     	return redirect(url_for('add_content'))
 
-    tid = md5.new(request.form['topic']).hexdigest()
+    time = str(datetime.datetime.now())
+        
+    tid = md5.new(time).hexdigest()
     topics = db.GqlQuery("SELECT * FROM Topic WHERE topicid = "+"'"+tid+"'")
 
     if not topics.fetch(10):

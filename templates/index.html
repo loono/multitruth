@@ -1,28 +1,33 @@
 <!DOCTYPE html>
 <html lang="utf8">
 <head>
-    <title>Multi Truths</title>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.css">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.js"></script>
-	<style type="text/css">
-		.main.container {
-    		margin-top: 5em;
-  		}
-	</style>
+    <title>MultiTruths</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 <body>
 
-    <div class="ui fixed menu">
-    	<div class="ui container">
-    		<a href="/" class="item">Multi Truths</a>	
-    	</div>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="navbar navbar-default">
+                <div class="navbar-header">
+                    <a href="/" class="navbar-brand"><img alt="Brand" src="/static/logo.png" style="max-height: 100%; width: auto"></img></a>
+                </div>
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <table class="table">
+                {% for item in files %}
+                <tr><td><a href="/topic/{{ item.topicid }}">{{ item.name }}</a><br></td></tr>
+                {% endfor %}
+                </table>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
     </div>
-
-    <div class="ui main text container">
-		{% for item in files %}
-        <a href="/topic/{{ item.topicid }}">{{ item.name }}</a><br>
-	    {% endfor %}
-	</div>
 
 
 </body>
