@@ -10,6 +10,7 @@ import md5
 import datetime
 from google.appengine.ext import db
 from jinja2 import Markup
+from sets import Set
 
 
 class Article(db.Model):
@@ -18,10 +19,7 @@ class Article(db.Model):
     media = db.StringProperty(required=True)
     fileid = db.StringProperty(required=True)
     time = db.StringProperty(required=True)
-    topicid = db.StringProperty(required=True)
-
-class Topic(db.Model):
-    name = db.StringProperty(required=True)
+    topic = db.StringProperty(required=True)
     topicid = db.StringProperty(required=True)
 
 
@@ -35,15 +33,19 @@ code = f.readline().strip()
 @app.route('/')
 def index():
 
-    topics = db.GqlQuery("SELECT * FROM Topic")
+    articles = db.GqlQuery("SELECT * FROM Article")
     
     files = []
-    for f in topics:
+    tids = Set()
+
+    for f in articles:
         a = {}
         a['topicid'] = f.topicid
-        a['name'] = f.name
-        files.append(a)
-    
+        a['name'] = f.topic
+        if f.topicid not in tids:
+            files.append(a)
+        tids.add(f.topicid)
+        
     return render_template('index.html', files=files)
 
 @app.route('/topic/<tid>')
@@ -73,32 +75,24 @@ def post_content():
 
     if md5.new(request.form['code']).hexdigest() != code:
     	return redirect(url_for('add_content'))
+
+
+    topic = request.form['topic']
     
-    tid = md5.new(request.form['topic'].encode("utf8")).hexdigest()
-    topics = db.GqlQuery("SELECT * FROM Topic WHERE topicid = "+"'"+tid+"'")
-
-    if not topics.fetch(10):
-        
-        t = Topic(name=request.form['topic'], 
-        		  topicid=tid)
-
-        t.put()
-
+    tid = md5.new(topic.encode("utf8")).hexdigest()
     title = request.form['title']
     time = str(datetime.datetime.now())
     fileid = md5.new(time).hexdigest()
     media = request.form['media']
-
     content = request.form['content']
-
-    print repr(content)
 
     f = Article(name=title,
     			time=time,
     			fileid=fileid,
     			content=content,
     			media=media,
-    			topicid=tid)
+    			topicid=tid,
+                topic=topic)
 
     f.put()
 
@@ -126,11 +120,14 @@ def remove():
     if md5.new(request.form['code']).hexdigest() != code:
         return redirect(url_for('delete'))
 
+    tids = Set()
+
     for f in request.form.getlist('files'):
     	f = "'" + f + "'"
         q = db.GqlQuery("SELECT * FROM Article WHERE fileid = " + f)
+        tids.add(q[0].topicid)
         db.delete(q.fetch(10))
-    
+
     return redirect(url_for('delete'))
 
 
