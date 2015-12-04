@@ -54,17 +54,19 @@ def page(tid):
     articles = db.GqlQuery("SELECT * FROM Article WHERE topicid = "+"'"+tid+"'")
 
     files = []
+    topic = ""
     for f in articles:
         a = {}
         a['title'] = f.name
         a['content'] = Markup(f.content)
         a['media'] = f.media
         a['fileid'] = f.fileid
+        topic = f.topic
         files.append(a)
     
     files.reverse()
 
-    return render_template('page.html', files=files)
+    return render_template('page.html', files=files, topic=topic)
 
 @app.route('/update')
 def add_content():
